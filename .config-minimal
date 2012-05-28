@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Busybox version: 1.20.0-ics
-# Mon Apr 23 17:54:47 2012
+# Busybox version: 1.20.1-cm9
+# Mon May 28 03:24:29 2012
 #
 CONFIG_HAVE_DOT_CONFIG=y
 
@@ -530,8 +530,8 @@ CONFIG_BLOCKDEV=y
 CONFIG_REV=y
 # CONFIG_ACPID is not set
 # CONFIG_FEATURE_ACPID_COMPAT is not set
-# CONFIG_BLKID is not set
-# CONFIG_FEATURE_BLKID_TYPE is not set
+CONFIG_BLKID=y
+CONFIG_FEATURE_BLKID_TYPE=y
 CONFIG_DMESG=y
 # CONFIG_FEATURE_DMESG_PRETTY is not set
 # CONFIG_FBSET is not set

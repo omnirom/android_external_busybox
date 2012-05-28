@@ -7,6 +7,7 @@
 /bin/base64
 /bin/basename
 /bin/bbconfig
+/sbin/blkid
 /sbin/blockdev
 /sbin/brctl
 /bin/bunzip2

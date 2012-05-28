@@ -179,8 +179,7 @@ static void write_irqcpu_stats(struct stats_irqcpu *per_cpu_stats[],
 		const char *prev_str, const char *current_str)
 {
 	int j;
-	int offset;
-	int cpu;
+	int offset, cpu;
 	struct stats_irqcpu *p0, *q0;
 
 	/* Check if number of IRQs has changed */
