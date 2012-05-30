@@ -27,9 +27,9 @@
 #endif
 
 enum {
-	OPT_TAGS = (1 << 8) - 1,
-	OPT_F = (1 << 8), /* field name */
-	OPT_0 = (1 << 9),  /* \0 as separator */
+	OPT_TAGS = (1 << 12) - 1, /* shortcut count */
+	OPT_F = (1 << 12), /* field name */
+	OPT_0 = (1 << 13), /* \0 as separator */
 };
 
 struct modinfo_env {
@@ -52,13 +52,17 @@ static void modinfo(const char *path, const char *version,
 {
 	static const char *const shortcuts[] = {
 		"filename",
-		"description",
-		"author",
 		"license",
+		"author",
+		"description",
+		"version",
+		"alias",
+		"srcversion",
+		"depends",
+		"uts_release",
 		"vermagic",
 		"parm",
 		"firmware",
-		"depends",
 	};
 	size_t len;
 	int j, length;
@@ -110,8 +114,11 @@ static void modinfo(const char *path, const char *version,
 			if (ptr == NULL) /* no occurance left, done */
 				break;
 			if (strncmp(ptr, pattern, length) == 0 && ptr[length] == '=') {
-				ptr += length + 1;
-				ptr += display(ptr, pattern, (1<<j) != tags);
+				/* field prefixes are 0x80 or 0x00 */
+				if ((ptr[-1] & 0x7F) == '\0') {
+					ptr += length + 1;
+					ptr += display(ptr, pattern, (1<<j) != tags);
+				}
 			}
 			++ptr;
 		}
@@ -144,7 +151,7 @@ int modinfo_main(int argc UNUSED_PARAM, char **argv)
 
 	env.field = NULL;
 	opt_complementary = "-1"; /* minimum one param */
-	opts = getopt32(argv, "fdalvpF:0", &env.field);
+	opts = getopt32(argv, "nladvAsDumpF:0", &env.field);
 	env.tags = opts & OPT_TAGS ? opts & OPT_TAGS : OPT_TAGS;
 	argv += optind;
 
@@ -161,12 +168,11 @@ int modinfo_main(int argc UNUSED_PARAM, char **argv)
 			fopen_for_read
 		);
 	}
-
+#endif
 	if (!parser) {
 		strcpy(uts.release,"");
 		goto no_modules_dep;
 	}
-#endif
 
 	while (config_read(parser, tokens, 2, 1, "# \t", PARSE_NORMAL)) {
 		colon = last_char_is(tokens[0], ':');
