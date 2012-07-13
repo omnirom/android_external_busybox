@@ -29,15 +29,16 @@ char *mkdtemp(char *);
 /* defined in bionic/stubs.c */
 char *ttyname(int);
 
-/* added to SYSCALLS.TXT:
-int    stime(time_t *) 25
-int    swapon(const char *, int)       87
-int    swapoff(const char *)   115
-*/
+/* SYSCALLS */
 int    stime(time_t *);
 int    swapon(const char *, int);
 int    swapoff(const char *);
 int    getsid(pid_t);
+
+#ifndef SYS_ioprio_set
+#define SYS_ioprio_set __NR_ioprio_set
+#define SYS_ioprio_get __NR_ioprio_get
+#endif
 
 /* local definition in libbb/xfuncs_printf.c */
 int fdprintf(int fd, const char *format, ...);
