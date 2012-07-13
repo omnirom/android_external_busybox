@@ -1899,6 +1899,10 @@ static const struct {
 	const char *var_text;
 	void (*var_func)(const char *) FAST_FUNC;
 } varinit_data[] = {
+	/*
+	 * Note: VEXPORT would not work correctly here for NOFORK applets:
+	 * some environment strings may be constant.
+	 */
 	{ VSTRFIXED|VTEXTFIXED       , defifsvar   , NULL            },
 #if ENABLE_ASH_MAIL
 	{ VSTRFIXED|VTEXTFIXED|VUNSET, "MAIL"      , changemail      },
@@ -6846,8 +6850,7 @@ evalvar(char *p, int flags, struct strlist *var_str_list)
 		patloc = expdest - (char *)stackblock();
 		if (NULL == subevalvar(p, /* varname: */ NULL, patloc, subtype,
 				startloc, varflags,
-//TODO: | EXP_REDIR too? All other such places do it too
-				/* quotes: */ flags & (EXP_FULL | EXP_CASE),
+				/* quotes: */ flags & (EXP_FULL | EXP_CASE | EXP_REDIR),
 				var_str_list)
 		) {
 			int amount = expdest - (
