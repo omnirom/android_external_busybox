@@ -29,7 +29,7 @@ miscutils/ionice.c
 modutils/modinfo.c modutils/modprobe-small.c modutils/modutils.c
 modutils/lsmod.c modutils/depmod.c modutils/rmmod.c modutils/insmod.c
 
-networking/arp.c networking/brctl.c networking/dnsd.c networking/ifconfig.c networking/interface.c networking/ip.c networking/nc.c networking/netstat.c networking/ntpd.c networking/ping.c networking/route.c networking/telnet.c networking/telnetd.c networking/tftp.c networking/traceroute.c networking/wget.c
+networking/arp.c networking/brctl.c networking/dnsd.c networking/ifconfig.c networking/inetd.c networking/interface.c networking/ip.c networking/nc.c networking/netstat.c networking/ntpd.c networking/ping.c networking/route.c networking/telnet.c networking/telnetd.c networking/tftp.c networking/traceroute.c networking/wget.c
 networking/libiproute/ip_parse_common_args.c networking/libiproute/ipaddress.c networking/libiproute/iplink.c networking/libiproute/iproute.c networking/libiproute/iprule.c networking/libiproute/libnetlink.c networking/libiproute/ll_addr.c networking/libiproute/ll_map.c networking/libiproute/ll_proto.c networking/libiproute/ll_types.c networking/libiproute/rt_names.c networking/libiproute/rtm_map.c networking/libiproute/utils.c networking/nbd-client.c networking/ifupdown.c networking/ftpgetput.c
 networking/nslookup.c
 

@@ -72,6 +72,7 @@
 /bin/hexdump
 /bin/id
 /sbin/ifconfig
+/sbin/inetd
 /sbin/insmod
 /bin/iostat
 /bin/install

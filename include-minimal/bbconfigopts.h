@@ -313,7 +313,6 @@ static const char bbconfig_config[] ALIGN1 =
 "# CONFIG_FEATURE_VI_SET is not set\n"
 "# CONFIG_FEATURE_VI_WIN_RESIZE is not set\n"
 "# CONFIG_FEATURE_VI_ASK_TERMINAL is not set\n"
-"# CONFIG_FEATURE_VI_OPTIMIZE_CURSOR is not set\n"
 "CONFIG_AWK=y\n"
 "# CONFIG_FEATURE_AWK_LIBM is not set\n"
 "CONFIG_CMP=y\n"
