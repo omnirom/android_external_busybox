@@ -3,6 +3,10 @@
 #include <asm/unistd.h>
 #include <sys/linux-syscalls.h>
 
+#ifndef __NR_stime
+#define __NR_stime (__NR_SYSCALL_BASE + 25)
+#endif
+
     .text
     .type stime, #function
     .globl stime
