@@ -1,8 +1,8 @@
 /*
  * Automatically generated C config: don't edit
- * Busybox version: 1.20.2-cm9
+ * Busybox version: 1.20.2-jb
  */
-#define AUTOCONF_TIMESTAMP "2012-07-14 01:52 +0200"
+#define AUTOCONF_TIMESTAMP "2012-07-27 02:57 +0200"
 
 #define CONFIG_HAVE_DOT_CONFIG 1
 #define ENABLE_HAVE_DOT_CONFIG 1
@@ -768,10 +768,10 @@
 #define ENABLE_EXPR 1
 #define IF_EXPR(...) __VA_ARGS__
 #define IF_NOT_EXPR(...)
-#undef CONFIG_EXPR_MATH_SUPPORT_64
-#define ENABLE_EXPR_MATH_SUPPORT_64 0
-#define IF_EXPR_MATH_SUPPORT_64(...)
-#define IF_NOT_EXPR_MATH_SUPPORT_64(...) __VA_ARGS__
+#define CONFIG_EXPR_MATH_SUPPORT_64 1
+#define ENABLE_EXPR_MATH_SUPPORT_64 1
+#define IF_EXPR_MATH_SUPPORT_64(...) __VA_ARGS__
+#define IF_NOT_EXPR_MATH_SUPPORT_64(...)
 #define CONFIG_FALSE 1
 #define ENABLE_FALSE 1
 #define IF_FALSE(...) __VA_ARGS__
@@ -3568,10 +3568,10 @@
 #define ENABLE_SH_MATH_SUPPORT 1
 #define IF_SH_MATH_SUPPORT(...) __VA_ARGS__
 #define IF_NOT_SH_MATH_SUPPORT(...)
-#undef CONFIG_SH_MATH_SUPPORT_64
-#define ENABLE_SH_MATH_SUPPORT_64 0
-#define IF_SH_MATH_SUPPORT_64(...)
-#define IF_NOT_SH_MATH_SUPPORT_64(...) __VA_ARGS__
+#define CONFIG_SH_MATH_SUPPORT_64 1
+#define ENABLE_SH_MATH_SUPPORT_64 1
+#define IF_SH_MATH_SUPPORT_64(...) __VA_ARGS__
+#define IF_NOT_SH_MATH_SUPPORT_64(...)
 #define CONFIG_FEATURE_SH_EXTRA_QUIET 1
 #define ENABLE_FEATURE_SH_EXTRA_QUIET 1
 #define IF_FEATURE_SH_EXTRA_QUIET(...) __VA_ARGS__
