@@ -208,7 +208,7 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 		int flags;
 		size_t oc;
 		off_t count;
-		off_t seek, skip;
+		uoff_t seek, skip;
 		const char *infile, *outfile;
 	} Z;
 #define flags   (Z.flags  )
@@ -344,6 +344,20 @@ int dd_main(int argc UNUSED_PARAM, char **argv)
 	} else {
 		outfile = bb_msg_standard_output;
 	}
+#if (!ENABLE_LFS) && defined(ANDROID)
+	if (skip) {
+		if (lseek64(ifd, skip * ibs, SEEK_SET) == (off64_t) -1)
+			fprintf(stderr, "warning: skip lseek64 failed\n");
+		else
+			skip = 0;
+	}
+	if (seek) {
+		if (lseek64(ifd, seek * obs, SEEK_SET) == (off64_t) -1)
+			fprintf(stderr, "warning: seek lseek64 failed\n");
+		else
+			seek = 0;
+	}
+#endif
 	if (skip) {
 		if (lseek(ifd, skip * ibs, SEEK_CUR) < 0) {
 			while (skip-- > 0) {
