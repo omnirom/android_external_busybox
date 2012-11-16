@@ -18,6 +18,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(shell cat $(BB_PATH)/android/librpc.sources)
 LOCAL_C_INCLUDES := $(BB_PATH)/android/librpc
 LOCAL_MODULE := libuclibcrpc
+LOCAL_CFLAGS += -fno-strict-aliasing
 include $(BUILD_STATIC_LIBRARY)
 
 
@@ -99,6 +100,7 @@ BUSYBOX_CFLAGS = \
 	-Werror=implicit \
 	-DNDEBUG \
 	-DANDROID \
+	-fno-strict-aliasing \
 	-include include-$(BUSYBOX_CONFIG)/autoconf.h \
 	-D'CONFIG_DEFAULT_MODULES_DIR="$(KERNEL_MODULES_DIR)"' \
 	-D'BB_VER="$(strip $(shell $(SUBMAKE) kernelversion)) $(BUSYBOX_SUFFIX)"' -DBB_BT=AUTOCONF_TIMESTAMP
