@@ -14,7 +14,7 @@
  *	add :help command
  *	:map macros
  *	if mark[] values were line numbers rather than pointers
- *	   it would be easier to change the mark when add/delete lines
+ *      it would be easier to change the mark when add/delete lines
  *	More intelligence in refresh()
  *	":r !cmd"  and  "!cmd"  to filter text through an external command
  *	A true "undo" facility
@@ -598,11 +598,15 @@ int vi_main(int argc, char **argv)
 	//----- This is the main file handling loop --------------
 	save_argc = argc;
 	optind = 0;
+	// "Save cursor, use alternate screen buffer, clear screen"
+	write1("\033[?1049h");
 	while (1) {
 		edit_file(argv[optind]); /* param might be NULL */
 		if (++optind >= argc)
 			break;
 	}
+	// "Use normal screen buffer, restore cursor"
+	write1("\033[?1049l");
 	//-----------------------------------------------------------
 
 	return 0;
@@ -1927,11 +1931,11 @@ static int find_range(char **start, char **stop, char c)
 		dot_end();		// find NL
 		q = dot;
 	} else {
-	    // nothing -- this causes any other values of c to
-	    // represent the one-character range under the
-	    // cursor.  this is correct for ' ' and 'l', but
-	    // perhaps no others.
-	    //
+		// nothing -- this causes any other values of c to
+		// represent the one-character range under the
+		// cursor.  this is correct for ' ' and 'l', but
+		// perhaps no others.
+		//
 	}
 	if (q < p) {
 		t = q;

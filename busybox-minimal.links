@@ -61,7 +61,7 @@
 /bin/install
 /bin/kill
 /bin/killall
-/bin/killall5
+/sbin/killall5
 /bin/length
 /bin/less
 /bin/ln

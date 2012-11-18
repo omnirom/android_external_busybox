@@ -211,6 +211,7 @@
 
 #include <stdint.h>
 typedef int      bb__aliased_int      FIX_ALIASING;
+typedef long     bb__aliased_long     FIX_ALIASING;
 typedef uint16_t bb__aliased_uint16_t FIX_ALIASING;
 typedef uint32_t bb__aliased_uint32_t FIX_ALIASING;
 
@@ -218,7 +219,8 @@ typedef uint32_t bb__aliased_uint32_t FIX_ALIASING;
  * a lvalue. This makes it more likely to not swap them by mistake
  */
 #if defined(i386) || defined(__x86_64__) || defined(__powerpc__)
-# define move_from_unaligned_int(v, intp) ((v) = *(bb__aliased_int*)(intp))
+# define move_from_unaligned_int(v, intp)  ((v) = *(bb__aliased_int*)(intp))
+# define move_from_unaligned_long(v, longp) ((v) = *(bb__aliased_long*)(longp))
 # define move_from_unaligned16(v, u16p) ((v) = *(bb__aliased_uint16_t*)(u16p))
 # define move_from_unaligned32(v, u32p) ((v) = *(bb__aliased_uint32_t*)(u32p))
 # define move_to_unaligned16(u16p, v)   (*(bb__aliased_uint16_t*)(u16p) = (v))
@@ -227,6 +229,7 @@ typedef uint32_t bb__aliased_uint32_t FIX_ALIASING;
 #else
 /* performs reasonably well (gcc usually inlines memcpy here) */
 # define move_from_unaligned_int(v, intp) (memcpy(&(v), (intp), sizeof(int)))
+# define move_from_unaligned_long(v, longp) (memcpy(&(v), (longp), sizeof(long)))
 # define move_from_unaligned16(v, u16p) (memcpy(&(v), (u16p), 2))
 # define move_from_unaligned32(v, u32p) (memcpy(&(v), (u32p), 4))
 # define move_to_unaligned16(u16p, v) do { \
@@ -290,7 +293,8 @@ typedef unsigned smalluint;
 #define fdprintf dprintf
 
 /* Useful for defeating gcc's alignment of "char message[]"-like data */
-#if 1 /* if needed: !defined(arch1) && !defined(arch2) */
+#if !defined(__s390__)
+    /* on s390[x], non-word-aligned data accesses require larger code */
 # define ALIGN1 __attribute__((aligned(1)))
 # define ALIGN2 __attribute__((aligned(2)))
 # define ALIGN4 __attribute__((aligned(4)))
