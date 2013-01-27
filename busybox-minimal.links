@@ -47,6 +47,7 @@
 /bin/fold
 /bin/free
 /sbin/freeramdisk
+/sbin/fstrim
 /bin/fuser
 /bin/getopt
 /bin/grep

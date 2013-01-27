@@ -58,6 +58,7 @@
 /bin/fold
 /bin/free
 /sbin/freeramdisk
+/sbin/fstrim
 /bin/fsync
 /bin/ftpget
 /bin/ftpput
