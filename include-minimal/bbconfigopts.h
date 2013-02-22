@@ -465,6 +465,7 @@ static const char bbconfig_config[] ALIGN1 =
 "# CONFIG_FLOCK is not set\n"
 "CONFIG_FREERAMDISK=y\n"
 "# CONFIG_FSCK_MINIX is not set\n"
+"CONFIG_FSTRIM=y\n"
 "CONFIG_MKFS_EXT2=y\n"
 "# CONFIG_MKFS_MINIX is not set\n"
 "# CONFIG_FEATURE_MINIX2 is not set\n"

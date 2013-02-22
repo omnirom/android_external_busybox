@@ -2,7 +2,7 @@
  * Automatically generated C config: don't edit
  * Busybox version: 1.20.2-jb
  */
-#define AUTOCONF_TIMESTAMP "2012-10-25 21:29 +0100"
+#define AUTOCONF_TIMESTAMP "2013-02-22 15:57 +0100"
 
 #define CONFIG_HAVE_DOT_CONFIG 1
 #define ENABLE_HAVE_DOT_CONFIG 1
@@ -1920,6 +1920,10 @@
 #define ENABLE_FSCK_MINIX 0
 #define IF_FSCK_MINIX(...)
 #define IF_NOT_FSCK_MINIX(...) __VA_ARGS__
+#define CONFIG_FSTRIM 1
+#define ENABLE_FSTRIM 1
+#define IF_FSTRIM(...) __VA_ARGS__
+#define IF_NOT_FSTRIM(...)
 #define CONFIG_MKFS_EXT2 1
 #define ENABLE_MKFS_EXT2 1
 #define IF_MKFS_EXT2(...) __VA_ARGS__
