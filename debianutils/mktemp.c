@@ -93,7 +93,7 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		chp = concat_path_file(path, chp);
 
 	if (opts & OPT_u) {
-		chp = mktemp(chp);
+		chp = mkstemp(chp);
 		if (chp[0] == '\0')
 			goto error;
 	} else if (opts & OPT_d) {
