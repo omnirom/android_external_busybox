@@ -93,17 +93,9 @@ int mktemp_main(int argc UNUSED_PARAM, char **argv)
 		chp = concat_path_file(path, chp);
 
 	if (opts & OPT_u) {
-#ifdef __BIONIC__
-		int fd = mkstemp(chp);
-		if (fd < 0)
-			goto error;
-
-		/* unlink created file */
-		close(fd);
-		unlink(chp);
-#else
 		chp = mktemp(chp);
-#endif
+		if (chp[0] == '\0')
+			goto error;
 	} else if (opts & OPT_d) {
 		if (mkdtemp(chp) == NULL)
 			goto error;
