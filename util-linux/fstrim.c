@@ -60,9 +60,7 @@ int fstrim_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int fstrim_main(int argc UNUSED_PARAM, char **argv)
 {
 	struct fstrim_range range;
-	char *arg_o;
-	char *arg_l;
-	char *arg_m;
+	char *arg_o, *arg_l, *arg_m, *mp;
 	unsigned opts;
 	int fd;
 
@@ -83,32 +81,29 @@ int fstrim_main(int argc UNUSED_PARAM, char **argv)
 	applet_long_options = getopt_longopts;
 #endif
 
-	opt_complementary = "=1";
+	opt_complementary = "=1"; /* exactly one non-option arg: the mountpoint */
 	opts = getopt32(argv, "o:l:m:v", &arg_o, &arg_l, &arg_m);
 
 	memset(&range, 0, sizeof(range));
 	range.len = ULLONG_MAX;
 
-	if (opts & OPT_o) {
+	if (opts & OPT_o)
 		range.start = xatoull_sfx(arg_o, fstrim_sfx);
-	}
-
-	if (opts & OPT_l) {
+	if (opts & OPT_l)
 		range.len = xatoull_sfx(arg_l, fstrim_sfx);
-	}
-
-	if (opts & OPT_m) {
+	if (opts & OPT_m)
 		range.minlen = xatoull_sfx(arg_m, fstrim_sfx);
-	}
 
-	if (find_block_device(argv[optind])) {
-		fd = xopen_nonblocking(argv[optind]);
+	mp = *(argv += optind);
+	if (find_block_device(mp)) {
+		fd = xopen_nonblocking(mp);
 		xioctl(fd, FITRIM, &range);
-		close(fd);
+		if (ENABLE_FEATURE_CLEAN_UP)
+			close(fd);
 
 		if (opts & OPT_v)
-			printf("%s: %llu bytes was trimmed\n", argv[optind], range.len);
+			printf("%s: %llu bytes were trimmed\n", mp, range.len);
+		return EXIT_SUCCESS;
 	}
-
-	return EXIT_SUCCESS;
+	return EXIT_FAILURE;
 }
