@@ -2,7 +2,7 @@
 # this step is no more required to build busybox, it is made automatically
 # in Android.mk (busybox_prepare module)
 
-cp ../.config ../.config-full
+cat ../.config | grep -v CONFIG_CROSS_COMPILER_PREFIX > ../.config-full
 
 cp ../include/applets.h ./
 cp ../include/applet_tables.h ./
