@@ -138,10 +138,12 @@ LDLIBS += pam pam_misc pthread
 endif
 
 ifeq ($(CONFIG_SELINUX),y)
+ifeq ($(ANDROID_PRODUCT_OUT),) # Ignore pkgconfig on Android Builds
 SELINUX_PC_MODULES = libselinux libsepol
 $(eval $(call pkg_check_modules,SELINUX,$(SELINUX_PC_MODULES)))
 CPPFLAGS += $(SELINUX_CFLAGS)
 LDLIBS += $(if $(SELINUX_LIBS),$(SELINUX_LIBS:-l%=%),$(SELINUX_PC_MODULES:lib%=%))
+endif
 endif
 
 ifeq ($(CONFIG_EFENCE),y)
