@@ -132,10 +132,10 @@ typedef enum {
 # define FMT_NET_CONN_HEADER     "\nProto Recv-Q Send-Q %-23s %-23s State       %s\n"
 #endif
 
-#define PROGNAME_WIDTH     20
-#define PROGNAME_WIDTH_STR "20"
+#define PROGNAME_WIDTH     70
+#define PROGNAME_WIDTH_STR "70"
 /* PROGNAME_WIDTH chars: 12345678901234567890 */
-#define PROGNAME_BANNER "PID/Program name    "
+#define PROGNAME_BANNER "PID/Program name                                                      "
 
 struct prg_node {
 	struct prg_node *next;
