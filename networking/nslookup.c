@@ -33,7 +33,7 @@
 # ifdef ENABLE_FEATURE_IPV6
 #  include <netinet/in6.h>
 # endif
-# include <arpa_nameser.h>
+# include <arpa/nameser.h>
 # include <resolv_private.h>
 # include <resolv.h>
 # undef _res
@@ -135,7 +135,7 @@ static void server_print(void)
 	sa = (struct sockaddr*)_res._u._ext.nsaddrs[0];
 	if (!sa)
 #endif
-		sa = (struct sockaddr*)&_res.nsaddr_list[0];
+		//sa = (struct sockaddr*)&_res.nsaddr_list[0];
 	server = xmalloc_sockaddr2dotted_noport(sa);
 
 	print_host(server, "Server:");
@@ -154,9 +154,9 @@ static void set_default_dns(const char *server)
 	lsa = xhost2sockaddr(server, 53);
 
 	if (lsa->u.sa.sa_family == AF_INET) {
-		_res.nscount = 1;
+		//_res.nscount = 1;
 		/* struct copy */
-		_res.nsaddr_list[0] = lsa->u.sin;
+		//_res.nsaddr_list[0] = lsa->u.sin;
 	}
 #if ENABLE_FEATURE_IPV6 && !defined(__BIONIC__)
 	/* Hoped libc can cope with IPv4 address there too.

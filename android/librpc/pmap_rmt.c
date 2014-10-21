@@ -60,7 +60,7 @@ static char sccsid[] = "@(#)pmap_rmt.c 1.21 87/08/27 Copyr 1984 Sun Micro";
 #define MAX_BROADCAST_SIZE 1400
 
 #ifdef ANDROID
-static struct in_addr inet_makeaddr(in_addr_t net, in_addr_t host)
+struct in_addr inet_makeaddr(in_addr_t net, in_addr_t host)
 {
 	struct in_addr a;
 
@@ -75,7 +75,7 @@ static struct in_addr inet_makeaddr(in_addr_t net, in_addr_t host)
 	a.s_addr = htonl(a.s_addr);
 	return a;
 }
-static in_addr_t inet_netof(struct in_addr in)
+in_addr_t inet_netof(struct in_addr in)
 {
 	in_addr_t i = ntohl(in.s_addr);
 
