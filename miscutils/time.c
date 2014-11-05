@@ -67,17 +67,8 @@ static const char long_format[] ALIGN1 =
 /* pid_t is short on BSDI, so don't try to promote it.  */
 static void resuse_end(pid_t pid, resource_t *resp)
 {
-	pid_t caught;
-
-	/* Ignore signals, but don't ignore the children.  When wait3
-	 * returns the child process, set the time the command finished. */
-	while ((caught = wait3(&resp->waitstatus, 0, &resp->ru)) != pid) {
-		if (caught == -1 && errno != EINTR) {
-			bb_perror_msg("wait");
-			return;
-		}
-	}
-	resp->elapsed_ms = monotonic_ms() - resp->elapsed_ms;
+    (void) pid;
+    (void) resp;
 }
 
 static void printargv(char *const *argv)
