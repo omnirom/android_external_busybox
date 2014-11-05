@@ -28,17 +28,21 @@
 #include <resolv.h>
 #include "libbb.h"
 
-#ifdef __BIONIC__
+#ifdef ANDROID
 # include <netinet/in.h>
-# ifdef ENABLE_FEATURE_IPV6
+# if ENABLE_FEATURE_IPV6
 #  include <netinet/in6.h>
 # endif
-# include <arpa/nameser.h>
-# include <resolv_private.h>
-# include <resolv.h>
-# undef _res
-# define _res (*__res_get_state())
-#endif
+# define ANDROID_CHANGES
+# ifdef BIONIC_L
+#  include <arpa/nameser.h>
+#  include <dns/include/resolv_private.h>
+#  include <dns/resolv/res_private.h>
+# else
+#  include <arpa_nameser.h>
+#  include <private/resolv_private.h>
+#  include <netbsd/resolv/res_private.h>
+# endif
 
 /*
  * I'm only implementing non-interactive mode;

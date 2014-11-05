@@ -408,6 +408,9 @@ typedef unsigned smalluint;
 # undef HAVE_UNLOCKED_STDIO
 # undef HAVE_UNLOCKED_LINE_OPS
 # undef HAVE_NET_ETHERNET_H
+# ifndef BIONIC_L
+#  undef HAVE_STPCPY
+# endif
 #endif
 
 #if defined(__CYGWIN__)

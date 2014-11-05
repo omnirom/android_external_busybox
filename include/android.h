@@ -66,4 +66,9 @@ const char *hasmntopt(const struct mntent *, const char *);
 typedef int socklen_t;
 #endif
 
+/* wait3 was removed in android L */
+#ifdef BIONIC_L
+#define wait3(status, options, rusage) wait4(-1, status, options, rusage)
+#endif
+
 #endif

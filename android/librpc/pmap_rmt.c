@@ -59,7 +59,7 @@ static char sccsid[] = "@(#)pmap_rmt.c 1.21 87/08/27 Copyr 1984 Sun Micro";
 #include <arpa/inet.h>
 #define MAX_BROADCAST_SIZE 1400
 
-#ifdef ANDROID
+#if defined(ANDROID) && !defined(BIONIC_L)
 struct in_addr inet_makeaddr(in_addr_t net, in_addr_t host)
 {
 	struct in_addr a;
