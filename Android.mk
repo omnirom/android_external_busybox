@@ -1,9 +1,9 @@
 LOCAL_PATH := $(call my-dir)
 BB_PATH := $(LOCAL_PATH)
 
-# Bionic Branches Switches (CM7/AOSP/ICS)
-BIONIC_ICS := true
-
+# Bionic Branches Switches (GB/ICS/L)
+BIONIC_ICS := false
+BIONIC_L := true
 
 # Make a static library for regex.
 include $(CLEAR_VARS)
