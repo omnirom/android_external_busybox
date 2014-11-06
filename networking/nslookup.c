@@ -34,7 +34,6 @@
 #  include <netinet/in6.h>
 # endif
 # include <arpa/nameser.h>
-# include <resolv_private.h>
 # include <resolv.h>
 # undef _res
 # define _res (*__res_get_state())
