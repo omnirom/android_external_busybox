@@ -34,7 +34,7 @@
  * but is no more present for 64-bit targets!
  */
 
-int __set_errno(int n)
+long __set_errno(int n)
 {
     errno = n;
     return -1;

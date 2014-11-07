@@ -26,11 +26,14 @@ LOCAL_PATH := $(BB_PATH)
 include $(CLEAR_VARS)
 
 # Explicitly set an architecture specific CONFIG_CROSS_COMPILER_PREFIX
-ifeq ($(TARGET_ARCH),arm)
-	BUSYBOX_CROSS_COMPILER_PREFIX := "arm-eabi-"
+ifneq ($(filter arm arm64,$(TARGET_ARCH)),)
+    BUSYBOX_CROSS_COMPILER_PREFIX := arm-linux-androideabi-
 endif
-ifeq ($(TARGET_ARCH),x86)
-	BUSYBOX_CROSS_COMPILER_PREFIX := "i686-linux-android-"
+ifneq ($(filter x86 x86_64,$(TARGET_ARCH)),)
+    BUSYBOX_CROSS_COMPILER_PREFIX := $(if $(filter x86_64,$(HOST_ARCH)),x86_64,i686)-linux-android-
+endif
+ifeq ($(TARGET_ARCH),mips)
+    BUSYBOX_CROSS_COMPILER_PREFIX := mipsel-linux-android-
 endif
 
 # Each profile require a compressed usage/config, outside the source tree for git history
@@ -76,34 +79,9 @@ SUBMAKE := make -s -C $(BB_PATH) CC=$(CC)
 BUSYBOX_SRC_FILES = $(shell cat $(BB_PATH)/busybox-$(BUSYBOX_CONFIG).sources) \
 	libbb/android.c
 
-ifeq ($(TARGET_ARCH),arm)
-	BUSYBOX_SRC_FILES += \
-	android/libc/arch-arm/syscalls/adjtimex.S \
-	android/libc/arch-arm/syscalls/getsid.S \
-	android/libc/arch-arm/syscalls/stime.S \
-	android/libc/arch-arm/syscalls/swapon.S \
-	android/libc/arch-arm/syscalls/swapoff.S \
-	android/libc/arch-arm/syscalls/sysinfo.S
-endif
-
-ifeq ($(TARGET_ARCH),x86)
-	BUSYBOX_SRC_FILES += \
-	android/libc/arch-x86/syscalls/adjtimex.S \
-	android/libc/arch-x86/syscalls/getsid.S \
-	android/libc/arch-x86/syscalls/stime.S \
-	android/libc/arch-x86/syscalls/swapon.S \
-	android/libc/arch-x86/syscalls/swapoff.S \
-	android/libc/arch-x86/syscalls/sysinfo.S
-endif
-
-ifeq ($(TARGET_ARCH),mips)
-	BUSYBOX_SRC_FILES += \
-	android/libc/arch-mips/syscalls/adjtimex.S \
-	android/libc/arch-mips/syscalls/getsid.S \
-	android/libc/arch-mips/syscalls/stime.S \
-	android/libc/arch-mips/syscalls/swapon.S \
-	android/libc/arch-mips/syscalls/swapoff.S \
-	android/libc/arch-mips/syscalls/sysinfo.S
+ifneq ($(filter arm x86 mips,$(TARGET_ARCH)),)
+    BUSYBOX_SRC_FILES += \
+        $(addprefix android/libc/arch-$(TARGET_ARCH)/syscalls/,$(BUSYBOX_ASM_FILES))
 endif
 
 BUSYBOX_C_INCLUDES = \
@@ -163,10 +141,7 @@ include $(CLEAR_VARS)
 BUSYBOX_CONFIG:=full
 BUSYBOX_SUFFIX:=bionic
 LOCAL_SRC_FILES := $(BUSYBOX_SRC_FILES)
-ifeq ($(BIONIC_ICS),true)
-LOCAL_SRC_FILES += android/libc/__set_errno.c
-endif
-LOCAL_C_INCLUDES := $(BUSYBOX_C_INCLUDES)
+LOCAL_C_INCLUDES := $(bb_gen)/full/include $(BUSYBOX_C_INCLUDES)
 LOCAL_CFLAGS := $(BUSYBOX_CFLAGS)
 LOCAL_LDFLAGS += -Wl,--no-fatal-warnings
 LOCAL_MODULE := busybox
