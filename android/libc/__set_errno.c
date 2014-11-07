@@ -29,7 +29,7 @@
 #include <errno.h>
 
 
-int __set_errno(int n)
+long __set_errno(int n)
 {
     errno = n;
     return -1;
@@ -41,7 +41,7 @@ int __set_errno(int n)
  */
 
 __LIBC_HIDDEN__
-int __set_syscall_errno(int n)
+long __set_syscall_errno(int n)
 {
         /* some syscalls, mmap() for example, have valid return
         ** values that are "negative".  Since errno values are not

@@ -271,7 +271,7 @@ struct BUG_off_t_size_is_misdetected {
 	char BUG_off_t_size_is_misdetected[sizeof(off_t) == sizeof(uoff_t) ? 1 : -1];
 };
 
-#ifdef __BIONIC__
+#if defined(__BIONIC__) && !defined(__LP64__)
 /* bionic uses stat64 which has long long file sizes, whereas off_t is only long bits */
 typedef long long filesize_t;
 #define FILESIZE_FMT "ll"
