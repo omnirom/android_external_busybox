@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2014 The Android Open Source Project
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,11 @@
 
 #include <errno.h>
 
+#ifdef __LP64__
+
+/* __set_errno was mistakenly exposed in <errno.h> in the 32-bit NDK.
+ * but is no more present for 64-bit targets!
+ */
 
 int __set_errno(int n)
 {
@@ -35,22 +40,4 @@ int __set_errno(int n)
     return -1;
 }
 
-/*
- * this function is called from syscall stubs,
- * (tail-called in the case of 0-4 arg versions)
- */
-
-__LIBC_HIDDEN__
-int __set_syscall_errno(int n)
-{
-        /* some syscalls, mmap() for example, have valid return
-        ** values that are "negative".  Since errno values are not
-        ** greater than 131 on Linux, we will just consider 
-        ** anything significantly out of range as not-an-error
-        */
-    if(n > -256) {
-        return __set_errno(-n);
-    } else {
-        return n;
-    }
-}
+#endif
