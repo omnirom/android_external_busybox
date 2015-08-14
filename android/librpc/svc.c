@@ -41,6 +41,7 @@
 
 #include <errno.h>
 #include <unistd.h>
+#include <strings.h>
 #include "rpc_private.h"
 #include <rpc/svc.h>
 #include <rpc/pmap_clnt.h>

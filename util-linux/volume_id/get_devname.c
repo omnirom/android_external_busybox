@@ -7,6 +7,11 @@
  *
  * Licensed under GPLv2 or later, see file LICENSE in this source tree.
  */
+
+//kbuild:lib-$(CONFIG_BLKID) += get_devname.o
+//kbuild:lib-$(CONFIG_FINDFS) += get_devname.o
+//kbuild:lib-$(CONFIG_FEATURE_MOUNT_LABEL) += get_devname.o
+
 #include <sys/mount.h> /* BLKGETSIZE64 */
 #if !defined(BLKGETSIZE64)
 # define BLKGETSIZE64 _IOR(0x12,114,size_t)
@@ -241,10 +246,10 @@ void display_uuid_cache(int scan_devices)
 
 int add_to_uuid_cache(const char *device)
 {
-	char *uuid = uuid; /* for compiler */
-	char *label = label;
+	static char *uuid; /* for compiler */
+	static char *label;
 #if ENABLE_FEATURE_BLKID_TYPE
-	const char *type = type;
+	static const char *type;
 #endif
 	int fd;
 
@@ -261,6 +266,26 @@ int add_to_uuid_cache(const char *device)
 	return 0;
 }
 
+char *get_fstype_from_devname(const char *device)
+{
+#if ENABLE_FEATURE_BLKID_TYPE
+	struct uuidCache_s *uc;
+	struct stat statbuf;
+
+	if (stat(device, &statbuf) < 0)
+		return NULL;
+
+	if (!S_ISBLK(statbuf.st_mode) && !S_ISREG(statbuf.st_mode))
+		return NULL;
+
+	add_to_uuid_cache(device);
+	uc = uuidcache_init(0);
+
+	return (uc != NULL ? (char*)uc->type : NULL);
+#else
+	return NULL;
+#endif
+}
 
 /* Used by mount and findfs */
 

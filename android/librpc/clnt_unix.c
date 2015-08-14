@@ -53,6 +53,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include <rpc/rpc.h>
 #include <sys/uio.h>
 #include <sys/poll.h>

@@ -84,7 +84,7 @@ struct globals {
 } FIX_ALIASING;
 #define G (*(struct globals*)&bb_common_bufsiz1)
 #define INIT_G() do { \
-	G.loginpath = "/bin/login"; \
+	G.loginpath = "/system/xbin/login"; \
 	G.issuefile = "/etc/issue.net"; \
 } while (0)
 

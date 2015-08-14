@@ -53,6 +53,10 @@
 
 #include "libbb.h"
 
+#ifdef __BIONIC__
+#define mktemp(s) bb_mktemp(s)
+#endif
+
 int mktemp_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int mktemp_main(int argc UNUSED_PARAM, char **argv)
 {

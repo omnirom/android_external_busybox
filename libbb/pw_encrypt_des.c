@@ -598,7 +598,7 @@ do_des(struct des_ctx *ctx, /*uint32_t l_in, uint32_t r_in,*/ uint32_t *l_out, u
 	 * l_in, r_in, l_out, and r_out are in pseudo-"big-endian" format.
 	 */
 	uint32_t l, r, *kl, *kr;
-	uint32_t f = f; /* silence gcc */
+	static uint32_t f; /* silence gcc */
 	uint32_t r48l, r48r;
 	int round;
 

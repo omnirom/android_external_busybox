@@ -36,7 +36,11 @@
 #endif
 
 
+#ifdef __BIONIC__
+#define TMPDIR          "/data/local/tmp"
+#else
 #define TMPDIR          CONFIG_FEATURE_CROND_DIR
+#endif
 #define CRONTABS        CONFIG_FEATURE_CROND_DIR "/crontabs"
 #ifndef SENDMAIL
 # define SENDMAIL       "sendmail"
@@ -693,7 +697,7 @@ static void start_one_job(const char *user, CronLine *line)
 	struct passwd *pas;
 	pid_t pid;
 
-	pas = getpwnam(user);
+	pas = safegetpwnam(user);
 	if (!pas) {
 		crondlog(WARN9 "can't get uid for %s", user);
 		goto err;

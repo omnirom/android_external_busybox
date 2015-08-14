@@ -36,8 +36,16 @@ static void writeheader(const char *path, struct stat *sb, int type)
 	strcpy(header.name, path);
 	sprintf(header.mode, "%o", sb->st_mode & 0777);
 	/* careful to not overflow fields! */
+#ifdef BIONIC_L
+	sprintf(header.uid, "%uo", sb->st_uid & 07777777);
+	sprintf(header.gid, "%uo", sb->st_gid & 07777777);
+#elif defined(__BIONIC__)
+	sprintf(header.uid, "%lo", sb->st_uid & 07777777);
+	sprintf(header.gid, "%lo", sb->st_gid & 07777777);
+#else
 	sprintf(header.uid, "%o", sb->st_uid & 07777777);
 	sprintf(header.gid, "%o", sb->st_gid & 07777777);
+#endif
 	sprintf(header.size, "%o", (unsigned)sb->st_size);
 	sprintf(header.mtime, "%llo", sb->st_mtime & 077777777777LL);
 	header.typeflag = type;

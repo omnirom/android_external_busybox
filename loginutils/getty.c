@@ -54,7 +54,12 @@ static FILE *dbf;
  * and for line editing at the same time.
  */
 #undef  _PATH_LOGIN
+#ifdef __BIONIC__
+#define cfsetspeed(t,s) cfsetispeed(t,s)
+#define _PATH_LOGIN "/system/xbin/login"
+#else
 #define _PATH_LOGIN "/bin/login"
+#endif
 
 /* Displayed before the login prompt.
  * If ISSUE is not defined, getty will never display the contents of the
@@ -94,7 +99,7 @@ struct globals {
 //usage:#define getty_trivial_usage
 //usage:       "[OPTIONS] BAUD_RATE[,BAUD_RATE]... TTY [TERMTYPE]"
 //usage:#define getty_full_usage "\n\n"
-//usage:       "Open TTY, prompt for login name, then invoke /bin/login\n"
+//usage:       "Open TTY, prompt for login name, then invoke /system/xbin/login\n"
 //usage:     "\n	-h		Enable hardware RTS/CTS flow control"
 //usage:     "\n	-L		Set CLOCAL (ignore Carrier Detect state)"
 //usage:     "\n	-m		Get baud rate from modem's CONNECT status message"
@@ -102,7 +107,7 @@ struct globals {
 //usage:     "\n	-w		Wait for CR or LF before sending /etc/issue"
 //usage:     "\n	-i		Don't display /etc/issue"
 //usage:     "\n	-f ISSUE_FILE	Display ISSUE_FILE instead of /etc/issue"
-//usage:     "\n	-l LOGIN	Invoke LOGIN instead of /bin/login"
+//usage:     "\n	-l LOGIN	Invoke LOGIN instead of /system/xbin/login"
 //usage:     "\n	-t SEC		Terminate after SEC if no login name is read"
 //usage:     "\n	-I INITSTR	Send INITSTR before anything else"
 //usage:     "\n	-H HOST		Log HOST into the utmp file as the hostname"
@@ -499,7 +504,7 @@ static char *get_logname(void)
 			default:
 				if ((unsigned char)c < ' ') {
 					/* ignore garbage characters */
-				} else if ((int)(bp - G.line_buf) < sizeof(G.line_buf) - 1) {
+				} else if ((int)(bp - G.line_buf) < (int)sizeof(G.line_buf) - 1) {
 					/* echo and store the character */
 					full_write(STDOUT_FILENO, &c, 1);
 					*bp++ = c;
@@ -695,6 +700,6 @@ int getty_main(int argc UNUSED_PARAM, char **argv)
 	/* We use PATH because we trust that root doesn't set "bad" PATH,
 	 * and getty is not suid-root applet */
 	/* With -n, logname == NULL, and login will ask for username instead */
-	BB_EXECLP(G.login, G.login, "--", logname, NULL);
+	BB_EXECLP(G.login, G.login, "--", logname, (char *)0);
 	bb_error_msg_and_die("can't execute '%s'", G.login);
 }

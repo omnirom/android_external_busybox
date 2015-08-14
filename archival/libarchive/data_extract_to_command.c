@@ -63,7 +63,7 @@ void FAST_FUNC data_extract_to_command(archive_handle_t *archive_handle)
 {
 	file_header_t *file_header = archive_handle->file_header;
 
-#if 0 /* do we need this? ENABLE_FEATURE_TAR_SELINUX */
+#if ENABLE_FEATURE_TAR_SELINUX
 	char *sctx = archive_handle->tar__sctx[PAX_NEXT_FILE];
 	if (!sctx)
 		sctx = archive_handle->tar__sctx[PAX_GLOBAL];
@@ -103,7 +103,7 @@ void FAST_FUNC data_extract_to_command(archive_handle_t *archive_handle)
 				archive_handle->tar__to_command_shell,
 				"-c",
 				archive_handle->tar__to_command,
-				NULL);
+				(char *)0);
 			bb_perror_msg_and_die("can't execute '%s'", archive_handle->tar__to_command_shell);
 		}
 		close(p[0]);

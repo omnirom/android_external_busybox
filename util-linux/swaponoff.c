@@ -60,7 +60,7 @@ static int swap_enable_disable(char *device)
 #if ENABLE_DESKTOP
 	/* test for holes */
 	if (S_ISREG(st.st_mode))
-		if (st.st_blocks * (off_t)512 < st.st_size)
+		if (st.st_blocks * (off_t)512 < (uint64_t) st.st_size)
 			bb_error_msg("warning: swap file has holes");
 #endif
 
@@ -95,6 +95,20 @@ static int do_em_all(void)
 			if (applet_name[5] != 'n'
 			 || hasmntopt(m, MNTOPT_NOAUTO) == NULL
 			) {
+#if ENABLE_FEATURE_SWAPON_PRI
+				const char *p;
+				g_flags = 0; /* each swap space might have different flags */
+				p = hasmntopt(m, "pri");
+				if (p) {
+					/* Max allowed 32767 (==SWAP_FLAG_PRIO_MASK) */
+					unsigned int swap_prio = MIN(bb_strtou(p + 4 , NULL, 10), SWAP_FLAG_PRIO_MASK);
+					/* We want to allow "NNNN,foo", thus errno == EINVAL is allowed too */
+					if (errno != ERANGE) {
+						g_flags = SWAP_FLAG_PREFER |
+							(swap_prio << SWAP_FLAG_PRIO_SHIFT);
+					}
+				}
+#endif
 				err += swap_enable_disable(m->mnt_fsname);
 			}
 		}

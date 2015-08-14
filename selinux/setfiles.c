@@ -651,6 +651,16 @@ int setfiles_main(int argc UNUSED_PARAM, char **argv)
 		argv++;
 	}
 
+#ifdef __BIONIC__
+	else {
+		const char *file_contexts = selinux_file_contexts_path();
+		/* Load the default file contexts configuration and check it. */
+		if (matchpathcon_init(file_contexts) < 0) {
+			bb_perror_msg_and_die("%s not found!", file_contexts);
+		}
+	}
+#endif
+
 	if (input_filename) {
 		ssize_t len;
 		FILE *f = stdin;
