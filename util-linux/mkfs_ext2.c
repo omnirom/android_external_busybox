@@ -58,7 +58,7 @@
 #define EXT2_FLAGS_UNSIGNED_HASH 0x0002
 
 // storage helpers
-char BUG_wrong_field_size(void);
+unsigned char BUG_wrong_field_size(void);
 #define STORE_LE(field, value) \
 do { \
 	if (sizeof(field) == 4) \

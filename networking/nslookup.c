@@ -28,17 +28,30 @@
 #include <resolv.h>
 #include "libbb.h"
 
-#ifdef __BIONIC__
+#ifdef ANDROID
 # include <netinet/in.h>
-# ifdef ENABLE_FEATURE_IPV6
+# if ENABLE_FEATURE_IPV6
 #  include <netinet/in6.h>
 # endif
-# include <arpa/nameser.h>
-# include <resolv_private.h>
-# include <resolv.h>
-# undef _res
-# define _res (*__res_get_state())
+# define ANDROID_CHANGES
+# ifdef BIONIC_L
+#  include <arpa/nameser.h>
+#  include <dns/include/resolv_private.h>
+#  include <dns/resolv/res_private.h>
+# else
+#  include <arpa_nameser.h>
+#  include <private/resolv_private.h>
+#  include <netbsd/resolv/res_private.h>
+# endif
+
+static struct __res_state res_st;
+struct __res_state * __res_state(void)
+{
+	return &res_st;
+}
 #endif
+
+#define EXT(res) ((&res)->_u._ext)
 
 /*
  * I'm only implementing non-interactive mode;
@@ -129,13 +142,19 @@ static int print_host(const char *hostname, const char *header)
 static void server_print(void)
 {
 	char *server;
-	struct sockaddr *sa=NULL;
+	struct sockaddr *sa = NULL;
 
-#if ENABLE_FEATURE_IPV6 && !defined(__BIONIC__)
-	sa = (struct sockaddr*)_res._u._ext.nsaddrs[0];
+#if ENABLE_FEATURE_IPV6
+# ifdef ANDROID
+	if (EXT(_res).ext)
+		sa = (struct sockaddr*) &EXT(_res).ext->nsaddrs[0];
+# else
+    sa = (struct sockaddr*)_res._u._ext.nsaddrs[0];
+# endif
+
 	if (!sa)
 #endif
-		//sa = (struct sockaddr*)&_res.nsaddr_list[0];
+		sa = (struct sockaddr*) &_res.nsaddr_list[0];
 	server = xmalloc_sockaddr2dotted_noport(sa);
 
 	print_host(server, "Server:");
@@ -150,15 +169,19 @@ static void set_default_dns(const char *server)
 {
 	len_and_sockaddr *lsa;
 
-	/* NB: this works even with, say, "[::1]:5353"! :) */
+	if (!server)
+		return;
+
+	/* NB: this works even with, say, "[::1]:53"! :) */
 	lsa = xhost2sockaddr(server, 53);
 
 	if (lsa->u.sa.sa_family == AF_INET) {
-		//_res.nscount = 1;
+		_res.nscount = 1;
 		/* struct copy */
-		//_res.nsaddr_list[0] = lsa->u.sin;
+		_res.nsaddr_list[0] = lsa->u.sin;
 	}
-#if ENABLE_FEATURE_IPV6 && !defined(__BIONIC__)
+
+#if ENABLE_FEATURE_IPV6
 	/* Hoped libc can cope with IPv4 address there too.
 	 * No such luck, glibc 2.4 segfaults even with IPv6,
 	 * maybe I misunderstand how to make glibc use IPv6 addr?
@@ -167,10 +190,18 @@ static void set_default_dns(const char *server)
 		// glibc neither SEGVs nor sends any dgrams with this
 		// (strace shows no socket ops):
 		//_res.nscount = 0;
-		_res._u._ext.nscount = 1;
+	#ifdef ANDROID
+		if (EXT(_res).ext) {
+			EXT(_res).nscount = 1;
+			memcpy(&EXT(_res).ext->nsaddrs[0].sin6, &lsa->u.sin6,
+				sizeof(struct sockaddr_in6));
+		}
+	#else
 		/* store a pointer to part of malloc'ed lsa */
+		_res._u._ext.nscount = 1;
 		_res._u._ext.nsaddrs[0] = &lsa->u.sin6;
 		/* must not free(lsa)! */
+	#endif
 	}
 #endif
 }
@@ -189,13 +220,26 @@ int nslookup_main(int argc, char **argv)
 	/* initialize DNS structure _res used in printing the default
 	 * name server and in the explicit name server option feature. */
 	res_init();
+
+#ifdef ANDROID
+	res_ninit(&_res);
+#endif
+
 	/* rfc2133 says this enables IPv6 lookups */
 	/* (but it also says "may be enabled in /etc/resolv.conf") */
 	/*_res.options |= RES_USE_INET6;*/
 
-	if (argv[2])
-		set_default_dns(argv[2]);
+	set_default_dns(argv[2]);
 
 	server_print();
+
+	/* getaddrinfo and friends are free to request a resolver
+	 * reinitialization. Just in case, set_default_dns() again
+	 * after getaddrinfo (in server_print). This reportedly helps
+	 * with bug 675 "nslookup does not properly use second argument"
+	 * at least on Debian Wheezy and Openwrt AA (eglibc based).
+	 */
+	set_default_dns(argv[2]);
+
 	return print_host(argv[1], "Name:");
 }

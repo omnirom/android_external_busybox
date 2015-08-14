@@ -102,7 +102,7 @@ static int run_pipe(const char *pager, char *man_filename, int man, int level)
 
  ordinary_manpage:
 	close(STDIN_FILENO);
-	open_zipped(man_filename); /* guaranteed to use fd 0 (STDIN_FILENO) */
+	open_zipped(man_filename, /*fail_if_not_compressed:*/ 0); /* guaranteed to use fd 0 (STDIN_FILENO) */
 	/* "2>&1" is added so that nroff errors are shown in pager too.
 	 * Otherwise it may show just empty screen */
 	cmd = xasprintf(
@@ -162,7 +162,7 @@ int man_main(int argc UNUSED_PARAM, char **argv)
 	opt = getopt32(argv, "+aw");
 	argv += optind;
 
-	sec_list = xstrdup("1:2:3:4:5:6:7:8:9");
+	sec_list = xstrdup("0p:1:1p:2:3:3p:4:5:6:7:8:9");
 	/* Last valid man_path_list[] is [0x10] */
 	count_mp = 0;
 	man_path_list = xzalloc(0x11 * sizeof(man_path_list[0]));

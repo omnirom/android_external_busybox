@@ -129,7 +129,7 @@ static int rtnl_dump_filter(struct rtnl_handle *rth,
 		}
 
 		h = (struct nlmsghdr*)buf;
-		while (NLMSG_OK(h, status)) {
+		while (NLMSG_OK(h, (unsigned) status)) {
 			int err;
 
 			if (nladdr.nl_pid != 0 ||

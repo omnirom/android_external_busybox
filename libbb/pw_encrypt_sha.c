@@ -21,7 +21,7 @@ sha_crypt(/*const*/ char *key_data, /*const*/ char *salt_data)
 	void (*sha_begin)(void *ctx) FAST_FUNC;
 	void (*sha_hash)(void *ctx, const void *buffer, size_t len) FAST_FUNC;
 	void (*sha_end)(void *ctx, void *resbuf) FAST_FUNC;
-	int _32or64;
+	unsigned _32or64;
 
 	char *result, *resptr;
 
@@ -152,7 +152,7 @@ sha_crypt(/*const*/ char *key_data, /*const*/ char *salt_data)
 	/* Start computation of S byte sequence.  */
 	/* For every character in the password add the entire password.  */
 	sha_begin(&alt_ctx);
-	for (cnt = 0; cnt < 16 + alt_result[0]; ++cnt)
+	for (cnt = 0; cnt < 16U + alt_result[0]; ++cnt)
 		sha_hash(&alt_ctx, salt_data, salt_len);
 	sha_end(&alt_ctx, temp_result);
 

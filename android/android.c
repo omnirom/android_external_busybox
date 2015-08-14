@@ -10,22 +10,22 @@
 #include <stdlib.h>
 #include "libbb.h"
 
-/* declared in stdlib.h */
-int clearenv()
+#ifndef BIONIC_ICS
+int clearenv(void)
 {
-	environ = NULL;
-	return 0;
-}
+	char **P = environ;
 
-/* bionic/stubs.c:ttyname not implemented anyway */
-int ttyname_r(int fd, char *name, size_t namesize)
-{
-	char *t = ttyname(fd);
-	if (!t)
-		return -1;
-	strncpy(name, ttyname(fd), namesize);
+	/* should never be NULL */
+	if (!environ)
+		environ = (char **)xzalloc(sizeof(char *));
+
+	if (P != NULL) {
+		for (; *P; ++P)
+			*P = NULL;
+	}
 	return 0;
 }
+#endif
 
 /* no /etc/shells anyway */
 char *getusershell() { return NULL; }
@@ -70,19 +70,19 @@ struct mntent *getmntent(FILE *fp)
 }
 
 /* not used anyway */
-int addmntent(FILE *fp, const struct mntent *mnt)
+int addmntent(FILE *fp UNUSED_PARAM, const struct mntent *mnt UNUSED_PARAM)
 {
 	errno = ENOENT;
 	return 1;
 }
 
-const char *hasmntopt(const struct mntent *mnt, const char *opt)
+char *hasmntopt(const struct mntent *mnt, const char *opt)
 {
-	const char *o = mnt->mnt_opts;
+	char *o = mnt->mnt_opts;
 	size_t l = strlen(opt);
 
-	while ((o = strstr(o, opt)) && 
-			((o > mnt->mnt_opts && o[-1] != ',') || 
+	while ((o = strstr(o, opt)) &&
+			((o > mnt->mnt_opts && o[-1] != ',') ||
 			 (o[l] != 0 && o[l] != ',' && o[l] != '=')));
 	return o;
 }
