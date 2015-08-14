@@ -38,6 +38,10 @@ static char sccsid[] = "@(#)rpc_dtablesize.c 1.2 87/08/11 Copyr 1987 Sun Micro";
 #include <unistd.h>
 #include <rpc/clnt.h>
 
+#ifdef BIONIC_L
+/* no more in unistd */
+extern int getdtablesize(void);
+#endif
 
 /*
  * Cache the result of getdtablesize(), so we don't have to do an

@@ -30,8 +30,8 @@
  */
 
 //usage:#define runcon_trivial_usage
-//usage:       "[-c] [-u USER] [-r ROLE] [-t TYPE] [-l RANGE] PROG ARGS\n"
-//usage:       "runcon CONTEXT PROG ARGS"
+//usage:       "[-c] [-u USER] [-r ROLE] [-t TYPE] [-l RANGE] PROG -- ARGS\n"
+//usage:       "runcon CONTEXT PROG -- ARGS"
 //usage:#define runcon_full_usage "\n\n"
 //usage:       "Run PROG in a different security context\n"
 //usage:     "\n	CONTEXT		Complete security context\n"
@@ -51,7 +51,9 @@
 //usage:	)
 
 #include <selinux/context.h>
+#ifndef ANDROID
 #include <selinux/flask.h>
+#endif
 
 #include "libbb.h"
 

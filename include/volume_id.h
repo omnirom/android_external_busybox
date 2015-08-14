@@ -18,6 +18,7 @@
  *	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+char *get_fstype_from_devname(const char *device);
 char *get_devname_from_label(const char *spec);
 char *get_devname_from_uuid(const char *spec);
 void display_uuid_cache(int scan_devices);

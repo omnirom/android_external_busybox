@@ -38,14 +38,28 @@
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
 
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/busybox_prepare_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/include/busybox-*)
+# Note: this is not really required, but remember only the added lines
+# will be executed (see $OUT/clean_steps.mk value for the current line)
+
+$(call add-clean-step, rm -f $(PRODUCT_OUT)/utilities/busybox)
+$(call add-clean-step, rm -f $(PRODUCT_OUT)/symbols/system/xbin/busybox)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/busybox_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libbusybox_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/UTILITY_EXECUTABLES/static_busybox_intermediates)
 
-$(call add-clean-step, rm $(PRODUCT_OUT)/symbols/system/xbin/busybox)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/busybox)
+
+# remains from old build system */
+$(call add-clean-step, rm -f external/busybox/include/bbconfigopts.h)
+$(call add-clean-step, rm -f external/busybox/include/autoconf.h)
+$(call add-clean-step, rm -f external/busybox/include/applet_tables.h)
+$(call add-clean-step, rm -f external/busybox/include/applets.h)
+$(call add-clean-step, rm -f external/busybox/.config)
+
+# force prepare
+$(call add-clean-step, touch external/busybox/busybox-minimal.config)
+$(call add-clean-step, touch external/busybox/busybox-full.config)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

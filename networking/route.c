@@ -41,7 +41,7 @@
 #include "inet_common.h"
 
 #if ENABLE_FEATURE_IPV6
-#include "ipv6/ipv6_route.h"
+#include <linux/ipv6_route.h>
 #endif
 
 #ifndef RTF_UP

@@ -47,7 +47,7 @@ static unsigned int part_array_len;
 static unsigned int part_entry_len;
 
 static inline gpt_partition *
-gpt_part(int i)
+gpt_part(unsigned i)
 {
 	if (i >= n_parts) {
 		return NULL;
@@ -90,12 +90,10 @@ gpt_print_wide(uint16_t *s, int max_len)
 static void
 gpt_list_table(int xtra UNUSED_PARAM)
 {
-	int i;
+	unsigned i;
 	char numstr6[6];
 
-	numstr6[5] = '\0';
-
-	smart_ulltoa5(total_number_of_sectors, numstr6, " KMGTPEZY");
+	smart_ulltoa5(total_number_of_sectors * sector_size, numstr6, " KMGTPEZY")[0] = '\0';
 	printf("Disk %s: %llu sectors, %s\n", disk_device,
 		(unsigned long long)total_number_of_sectors,
 		numstr6);
@@ -112,8 +110,8 @@ gpt_list_table(int xtra UNUSED_PARAM)
 	for (i = 0; i < n_parts; i++) {
 		gpt_partition *p = gpt_part(i);
 		if (p->lba_start) {
-			smart_ulltoa5(1 + SWAP_LE64(p->lba_end) - SWAP_LE64(p->lba_start),
-				numstr6, " KMGTPEZY");
+			smart_ulltoa5((1 + SWAP_LE64(p->lba_end) - SWAP_LE64(p->lba_start)) * sector_size,
+				numstr6, " KMGTPEZY")[0] = '\0';
 			printf("%4u %15llu %15llu %11s   %04x  ",
 				i + 1,
 				(unsigned long long)SWAP_LE64(p->lba_start),
@@ -177,7 +175,7 @@ check_gpt_label(void)
 	part_array_len = n_parts * part_entry_len;
 	part_array = xmalloc(part_array_len);
 	seek_sector(SWAP_LE64(gpt_hdr->first_part_lba));
-	if (full_read(dev_fd, part_array, part_array_len) != part_array_len) {
+	if (full_read(dev_fd, part_array, part_array_len) != (ssize_t) part_array_len) {
 		fdisk_fatal(unable_to_read);
 	}
 

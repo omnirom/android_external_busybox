@@ -161,7 +161,7 @@ init_syntax_once ()
 #endif /* not emacs */
 
 /* Get the interface, including the syntax bits.  */
-#include "regex.h"
+#include "bb_regex.h"
 
 /* isalpha etc. are used for the character classes.  */
 #include <ctype.h>
@@ -922,7 +922,7 @@ reg_syntax_t re_syntax_options;
    defined in regex.h.	We return the old syntax.  */
 
 reg_syntax_t
-re_set_syntax (syntax)
+bb_re_set_syntax (syntax)
     reg_syntax_t syntax;
 {
   reg_syntax_t ret = re_syntax_options;
@@ -2917,7 +2917,7 @@ compile_range (p_ptr, pend, translate, syntax, b)
    Returns 0 if we succeed, -2 if an internal error.   */
 
 int
-re_compile_fastmap (bufp)
+bb_re_compile_fastmap (bufp)
      struct re_pattern_buffer *bufp;
 {
   int j, k;
@@ -3223,7 +3223,7 @@ re_compile_fastmap (bufp)
    freeing the old data.  */
 
 void
-re_set_registers (bufp, regs, num_regs, starts, ends)
+bb_re_set_registers (bufp, regs, num_regs, starts, ends)
     struct re_pattern_buffer *bufp;
     struct re_registers *regs;
     unsigned num_regs;
@@ -3250,13 +3250,13 @@ re_set_registers (bufp, regs, num_regs, starts, ends)
    doesn't let you say where to stop matching. */
 
 int
-re_search (bufp, string, size, startpos, range, regs)
+bb_re_search (bufp, string, size, startpos, range, regs)
      struct re_pattern_buffer *bufp;
      const char *string;
      int size, startpos, range;
      struct re_registers *regs;
 {
-  return re_search_2 (bufp, NULL, 0, string, size, startpos, range,
+  return bb_re_search_2 (bufp, NULL, 0, string, size, startpos, range,
 		      regs, size);
 }
 
@@ -3283,7 +3283,7 @@ re_search (bufp, string, size, startpos, range, regs)
    stack overflow).  */
 
 int
-re_search_2 (bufp, string1, size1, string2, size2, startpos, range, regs, stop)
+bb_re_search_2 (bufp, string1, size1, string2, size2, startpos, range, regs, stop)
      struct re_pattern_buffer *bufp;
      const char *string1, *string2;
      int size1, size2;
@@ -3334,7 +3334,7 @@ re_search_2 (bufp, string1, size1, string2, size2, startpos, range, regs, stop)
 
   /* Update the fastmap now if not correct already.  */
   if (fastmap && !bufp->fastmap_accurate)
-    if (re_compile_fastmap (bufp) == -2)
+    if (bb_re_compile_fastmap (bufp) == -2)
       return -2;
 
   /* See whether the pattern is anchored.  */
@@ -3526,7 +3526,7 @@ static boolean alt_match_null_string_p (),
 /* re_match is like re_match_2 except it takes only a single string.  */
 
 int
-re_match (bufp, string, size, pos, regs)
+bb_re_match (bufp, string, size, pos, regs)
      struct re_pattern_buffer *bufp;
      const char *string;
      int size, pos;
@@ -3554,7 +3554,7 @@ re_match (bufp, string, size, pos, regs)
    matched substring.  */
 
 int
-re_match_2 (bufp, string1, size1, string2, size2, pos, regs, stop)
+bb_re_match_2 (bufp, string1, size1, string2, size2, pos, regs, stop)
      struct re_pattern_buffer *bufp;
      const char *string1, *string2;
      int size1, size2;
@@ -5186,7 +5186,7 @@ bcmp_translate (s1, s2, len, translate)
    We call regex_compile to do the actual compilation.	*/
 
 const char *
-re_compile_pattern (pattern, length, bufp)
+bb_re_compile_pattern (pattern, length, bufp)
      const char *pattern;
      int length;
      struct re_pattern_buffer *bufp;
@@ -5227,7 +5227,7 @@ char *
    regcomp/regexec below without link errors.  */
 weak_function
 #endif
-re_comp (s)
+bb_re_comp (s)
     const char *s;
 {
   reg_errcode_t ret;
@@ -5271,12 +5271,12 @@ int
 #ifdef _LIBC
 weak_function
 #endif
-re_exec (s)
+bb_re_exec (s)
     const char *s;
 {
   const int len = strlen (s);
   return
-    0 <= re_search (&re_comp_buf, s, len, 0, len, (struct re_registers *) 0);
+    0 <= bb_re_search (&re_comp_buf, s, len, 0, len, (struct re_registers *) 0);
 }
 #endif /* _REGEX_RE_COMP */
 
@@ -5321,7 +5321,7 @@ int
 #ifdef _LIBC
 weak_function
 #endif
-regcomp (preg, pattern, cflags)
+bb_regcomp (preg, pattern, cflags)
     regex_t *preg;
     const char *pattern;
     int cflags;
@@ -5401,7 +5401,7 @@ int
 #ifdef _LIBC
 weak_function
 #endif
-regexec (preg, string, nmatch, pmatch, eflags)
+bb_regexec (preg, string, nmatch, pmatch, eflags)
     const regex_t *preg;
     const char *string;
     size_t nmatch;
@@ -5434,7 +5434,7 @@ regexec (preg, string, nmatch, pmatch, eflags)
     }
 
   /* Perform the searching operation.  */
-  ret = re_search (&private_preg, string, len,
+  ret = bb_re_search (&private_preg, string, len,
 		   /* start: */ 0, /* range: */ len,
 		   want_reg_info ? &regs : (struct re_registers *) 0);
 
@@ -5471,7 +5471,7 @@ size_t
    regcomp/regexec below without link errors.  */
 weak_function
 #endif
-regerror (errcode, preg, errbuf, errbuf_size)
+bb_regerror (errcode, preg, errbuf, errbuf_size)
     int errcode;
     const regex_t *preg;
     char *errbuf;
@@ -5516,7 +5516,7 @@ void
    regcomp/regexec below without link errors.  */
 weak_function
 #endif
-regfree (preg)
+bb_regfree (preg)
     regex_t *preg;
 {
   if (preg->buffer != NULL)

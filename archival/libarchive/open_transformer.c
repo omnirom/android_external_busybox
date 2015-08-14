@@ -34,6 +34,7 @@ void check_errors_in_children(int signo)
 	if (!signo) {
 		/* block waiting for any child */
 		if (wait(&status) < 0)
+//FIXME: check EINTR?
 			return; /* probably there are no children */
 		goto check_status;
 	}
@@ -41,14 +42,18 @@ void check_errors_in_children(int signo)
 	/* Wait for any child without blocking */
 	for (;;) {
 		if (wait_any_nohang(&status) < 0)
+//FIXME: check EINTR?
 			/* wait failed?! I'm confused... */
 			return;
  check_status:
-		if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+		/*if (WIFEXITED(status) && WEXITSTATUS(status) == 0)*/
+		/* On Linux, the above can be checked simply as: */
+		if (status == 0)
 			/* this child exited with 0 */
 			continue;
-		/* Cannot happen?
-		if (!WIFSIGNALED(status) && !WIFEXITED(status)) ???; */
+		/* Cannot happen:
+		if (!WIFSIGNALED(status) && !WIFEXITED(status)) ???;
+		 */
 		bb_got_signal = 1;
 	}
 }
@@ -74,16 +79,17 @@ void FAST_FUNC open_transformer(int fd, const char *transform_prog)
 		// FIXME: error check?
 #if BB_MMU
 		{
+			IF_DESKTOP(long long) int r;
 			transformer_aux_data_t aux;
 			init_transformer_aux_data(&aux);
 			aux.check_signature = check_signature;
-			transformer(&aux, fd, fd_pipe.wr);
+			r = transformer(&aux, fd, fd_pipe.wr);
 			if (ENABLE_FEATURE_CLEAN_UP) {
 				close(fd_pipe.wr); /* send EOF */
 				close(fd);
 			}
 			/* must be _exit! bug was actually seen here */
-			_exit(EXIT_SUCCESS);
+			_exit(/*error if:*/ r < 0);
 		}
 #else
 		{
@@ -112,7 +118,7 @@ void FAST_FUNC open_transformer(int fd, const char *transform_prog)
 /* Used by e.g. rpm which gives us a fd without filename,
  * thus we can't guess the format from filename's extension.
  */
-int FAST_FUNC setup_unzip_on_fd(int fd, int fail_if_not_detected)
+int FAST_FUNC setup_unzip_on_fd(int fd, int fail_if_not_compressed)
 {
 	union {
 		uint8_t b[4];
@@ -153,7 +159,7 @@ int FAST_FUNC setup_unzip_on_fd(int fd, int fail_if_not_detected)
 	}
 
 	/* No known magic seen */
-	if (fail_if_not_detected)
+	if (fail_if_not_compressed)
 		bb_error_msg_and_die("no gzip"
 			IF_FEATURE_SEAMLESS_BZ2("/bzip2")
 			IF_FEATURE_SEAMLESS_XZ("/xz")
@@ -174,28 +180,27 @@ int FAST_FUNC setup_unzip_on_fd(int fd, int fail_if_not_detected)
 	return 0;
 }
 
-int FAST_FUNC open_zipped(const char *fname)
+int FAST_FUNC open_zipped(const char *fname, int fail_if_not_compressed)
 {
-	char *sfx;
 	int fd;
 
 	fd = open(fname, O_RDONLY);
 	if (fd < 0)
 		return fd;
 
-	sfx = strrchr(fname, '.');
-	if (sfx) {
-		sfx++;
-		if (ENABLE_FEATURE_SEAMLESS_LZMA && strcmp(sfx, "lzma") == 0)
-			/* .lzma has no header/signature, just trust it */
+	if (ENABLE_FEATURE_SEAMLESS_LZMA) {
+		/* .lzma has no header/signature, can only detect it by extension */
+		char *sfx = strrchr(fname, '.');
+		if (sfx && strcmp(sfx+1, "lzma") == 0) {
 			open_transformer_with_sig(fd, unpack_lzma_stream, "unlzma");
-		else
-		if ((ENABLE_FEATURE_SEAMLESS_GZ && strcmp(sfx, "gz") == 0)
-		 || (ENABLE_FEATURE_SEAMLESS_BZ2 && strcmp(sfx, "bz2") == 0)
-		 || (ENABLE_FEATURE_SEAMLESS_XZ && strcmp(sfx, "xz") == 0)
-		) {
-			setup_unzip_on_fd(fd, /*fail_if_not_detected:*/ 1);
+			return fd;
 		}
+	}
+	if ((ENABLE_FEATURE_SEAMLESS_GZ)
+	 || (ENABLE_FEATURE_SEAMLESS_BZ2)
+	 || (ENABLE_FEATURE_SEAMLESS_XZ)
+	) {
+		setup_unzip_on_fd(fd, fail_if_not_compressed);
 	}
 
 	return fd;
@@ -208,7 +213,7 @@ void* FAST_FUNC xmalloc_open_zipped_read_close(const char *fname, size_t *maxsz_
 	int fd;
 	char *image;
 
-	fd = open_zipped(fname);
+	fd = open_zipped(fname, /*fail_if_not_compressed:*/ 0);
 	if (fd < 0)
 		return NULL;
 
