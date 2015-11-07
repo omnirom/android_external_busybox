@@ -211,4 +211,5 @@ LOCAL_UNSTRIPPED_PATH := $(PRODUCT_OUT)/symbols/utilities
 $(LOCAL_MODULE): busybox_prepare
 LOCAL_PACK_MODULE_RELOCATIONS := false
 LOCAL_ADDITIONAL_DEPENDENCIES := $(busybox_prepare_full)
+LOCAL_CLANG := false
 include $(BUILD_EXECUTABLE)
