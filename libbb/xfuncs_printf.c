@@ -649,7 +649,7 @@ pid_t FAST_FUNC xfork(void)
 	pid_t pid;
 	pid = fork();
 	if (pid < 0) /* wtf? */
-		bb_perror_msg_and_die("vfork"+1);
+		bb_perror_msg_and_die("vfork");
 	return pid;
 }
 #endif
