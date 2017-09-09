@@ -33,7 +33,9 @@
 # if ENABLE_FEATURE_IPV6
 #  include <netinet/in6.h>
 # endif
-# define ANDROID_CHANGES
+# ifndef BIONIC_O
+#  define ANDROID_CHANGES
+# endif
 # ifdef BIONIC_L
 #  include <arpa/nameser.h>
 #  include <dns/include/resolv_private.h>

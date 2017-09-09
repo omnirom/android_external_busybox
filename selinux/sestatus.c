@@ -23,6 +23,15 @@ extern char *selinux_mnt;
 
 #define COL_FMT  "%-31s "
 
+private int current_selinux_getenforcemode(int *rc)
+{
+	if (rc) {
+		*rc = security_getenforce();
+		return 0;
+	}
+	return -1;
+}
+
 static void display_boolean(void)
 {
 	char **bools;
@@ -181,7 +190,7 @@ int sestatus_main(int argc UNUSED_PARAM, char **argv)
 	       rc == 0 ? "permissive" : "enforcing");
 
 	/* Mode from config file: line */
-	if (selinux_getenforcemode(&rc) != 0)
+	if (current_selinux_getenforcemode(&rc) != 0)
 		goto error;
 	printf(COL_FMT "%s\n", "Mode from config file:",
 	       rc < 0 ? "disabled" : (rc == 0 ? "permissive" : "enforcing"));
