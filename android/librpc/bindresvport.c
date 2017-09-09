@@ -43,7 +43,7 @@ extern long __set_errno(int n);
 #include <sys/types.h>
 #endif
 #include <sys/socket.h>
-#include <netinet/in.h>
+#include <include/netinet/in.h>
 
 
 /*
