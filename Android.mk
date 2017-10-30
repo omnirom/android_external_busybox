@@ -1,3 +1,5 @@
+LOCAL_CLANG_EXCEPTION_PROJECTS += external/busybox
+LOCAL_CLANG_EXCEPTION_PROJECTS += external/busybox/android/librpc
 LOCAL_PATH := $(call my-dir)
 BB_PATH := $(LOCAL_PATH)
 
@@ -19,6 +21,7 @@ LOCAL_SRC_FILES := $(shell cat $(BB_PATH)/android/librpc.sources)
 LOCAL_C_INCLUDES := $(BB_PATH)/android/librpc
 LOCAL_MODULE := libuclibcrpc
 LOCAL_CFLAGS += -fno-strict-aliasing
+LOCAL_CLANG := false
 ifeq ($(BIONIC_L),true)
 LOCAL_CFLAGS += -DBIONIC_ICS -DBIONIC_L
 endif
