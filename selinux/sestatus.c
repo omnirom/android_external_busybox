@@ -180,12 +180,6 @@ int sestatus_main(int argc UNUSED_PARAM, char **argv)
 	printf(COL_FMT "%s\n", "Current mode:",
 	       rc == 0 ? "permissive" : "enforcing");
 
-	/* Mode from config file: line */
-	if (selinux_getenforcemode(&rc) != 0)
-		goto error;
-	printf(COL_FMT "%s\n", "Mode from config file:",
-	       rc < 0 ? "disabled" : (rc == 0 ? "permissive" : "enforcing"));
-
 	/* Policy version: line */
 	rc = security_policyvers();
 	if (rc < 0)
