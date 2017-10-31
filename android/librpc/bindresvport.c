@@ -44,6 +44,7 @@ extern long __set_errno(int n);
 #endif
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 
 
 /*

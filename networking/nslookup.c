@@ -27,31 +27,26 @@
 
 #include <resolv.h>
 #include "libbb.h"
+#include <netdb.h>
 
 #ifdef ANDROID
 # include <netinet/in.h>
+# include <arpa/nameser.h>
+# include <dns/include/resolv_private.h>
+# include <dns/resolv/res_private.h>
 # if ENABLE_FEATURE_IPV6
 #  include <netinet/in6.h>
-# endif
-# define ANDROID_CHANGES
-# ifdef BIONIC_L
-#  include <arpa/nameser.h>
-#  include <dns/include/resolv_private.h>
-#  include <dns/resolv/res_private.h>
-# else
-#  include <arpa_nameser.h>
-#  include <private/resolv_private.h>
-#  include <netbsd/resolv/res_private.h>
 # endif
 
 static struct __res_state res_st;
 struct __res_state * __res_state(void)
 {
-	return &res_st;
+       return &res_st;
 }
-#endif
 
 #define EXT(res) ((&res)->_u._ext)
+
+# endif
 
 /*
  * I'm only implementing non-interactive mode;

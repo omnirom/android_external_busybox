@@ -9,6 +9,7 @@
 /*#include <net/if_packet.h> - not needed? */
 #include <netpacket/packet.h>
 #include <netinet/if_ether.h>
+#include <linux/if_ether.h>
 
 #include <linux/if_vlan.h>
 #include "ip_common.h"  /* #include "libbb.h" is inside */
