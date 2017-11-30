@@ -1,0 +1,15 @@
+// Make a static library for RPC library (coming from uClibc).
+cc_library_static {
+    srcs: ["external/busybox/android/librpc/*"],
+    include_dirs: ["external/busybox/android/librpc"],
+    name: "libuclibcrpc",
+    cflags: ["-fno-strict-aliasing"] + [ // ANDROIDMK TRANSLATION ERROR: unsupported conditional
+    // ifeq ($(BIONIC_L),true)
+        "-DBIONIC_ICS",
+        "-DBIONIC_L",
+    ],
+
+    // ANDROIDMK TRANSLATION ERROR: endif from unsupported contitional
+    // endif
+
+}

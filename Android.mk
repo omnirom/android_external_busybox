@@ -13,17 +13,6 @@ LOCAL_CFLAGS := -Wno-sign-compare
 LOCAL_MODULE := libclearsilverregex
 include $(BUILD_STATIC_LIBRARY)
 
-# Make a static library for RPC library (coming from uClibc).
-include $(CLEAR_VARS)
-LOCAL_SRC_FILES := $(shell cat $(BB_PATH)/android/librpc.sources)
-LOCAL_C_INCLUDES := $(BB_PATH)/android/librpc
-LOCAL_MODULE := libuclibcrpc
-LOCAL_CFLAGS += -fno-strict-aliasing
-ifeq ($(BIONIC_L),true)
-LOCAL_CFLAGS += -DBIONIC_ICS -DBIONIC_L
-endif
-include $(BUILD_STATIC_LIBRARY)
-
 #####################################################################
 
 # Execute make prepare for normal config & static lib (recovery)
